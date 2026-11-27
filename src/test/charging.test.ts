@@ -16,3 +16,19 @@ describe("charging percentage", () => {
     expect(advanceCharge(99.99, 0.02)).toBe(100);
   });
 });
+import { resolveStartCharge, resolveTestBackground } from "@/lib/charging";
+describe("shortcut parameters", () => {
+  it("starts from the battery value passed by the shortcut", () => {
+    expect(resolveStartCharge("45")).toBe(45);
+    expect(resolveStartCharge(62.5)).toBe(62.5);
+    expect(resolveStartCharge("80%")).toBe(80);
+    expect(resolveStartCharge("150")).toBe(100);
+    expect(resolveStartCharge("abc")).toBe(79.98);
+    expect(resolveStartCharge(undefined)).toBe(79.98);
+  });
+  it("accepts a single test background color", () => {
+    expect(resolveTestBackground("00ff00")).toBe("#00ff00");
+    expect(resolveTestBackground("red")).toBe("red");
+    expect(resolveTestBackground("url(x)")).toBeUndefined();
+  });
+});

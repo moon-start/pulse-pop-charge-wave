@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { Battery, Wifi, Signal, Volume2, VolumeX, CloudSun, StickyNote, Flower2, CreditCard, Camera, Mail, MessageCircle, Phone, Compass, Music2, Settings, CalendarDays, Heart, ShoppingBag, Play, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChargingCharacters } from "@/components/charging-characters";
-import { advanceCharge, INITIAL_CHARGE, resolveChargingMode } from "@/lib/charging";
+import { advanceCharge, resolveChargingMode, resolveStartCharge, resolveTestBackground } from "@/lib/charging";
 import wallpaper from "@/assets/pink-cafe-wallpaper.png.asset.json";
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>) => ({ mode: resolveChargingMode(search["mode"]) }),
+  validateSearch: (search: Record<string, unknown>) => ({ mode: resolveChargingMode(search["mode"]), battery: resolveStartCharge(search["battery"]), bg: resolveTestBackground(search["bg"]) }),
   head: () => ({ meta: [
     { title: "小新與小白・Turbo 充電桌布" },
     { name: "description", content: "粉彩櫻花咖啡廳 iPhone 全螢幕充電動畫：小新與小白、粉紅流光能量環與 Turbo 充電光束。" },
@@ -30,14 +30,16 @@ const apps = [
 ];
 
 function ChargingScreen() {
-  const { mode } = Route.useSearch();
+  const { mode, battery, bg } = Route.useSearch();
   const navigate = Route.useNavigate();
   const transparent = mode === "transparent";
-  const [percentage, setPercentage] = useState(INITIAL_CHARGE);
+  const [percentage, setPercentage] = useState(battery);
   const [sound, setSound] = useState(false);
   const [burst, setBurst] = useState(false);
   const audio = useRef<AudioContext | null>(null);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => { setPercentage(battery); }, [battery]);
 
   useEffect(() => {
     const timer = setInterval(() => setPercentage(p => advanceCharge(p, 0.01 + Math.random() * 0.008)), 1600);
@@ -72,11 +74,11 @@ function ChargingScreen() {
   };
 
   return (
-    <main className="charging-screen" data-mode={mode} onPointerDown={pulse} aria-label="小新 Turbo 充電動畫">
-      {!transparent && <img className="desktop-wallpaper" src={wallpaper.url} alt="" />}
+    <main className="charging-screen" data-mode={mode} style={bg ? { background: bg } : undefined} onPointerDown={pulse} aria-label="小新 Turbo 充電動畫">
+      {!transparent && !bg && <img className="desktop-wallpaper" src={wallpaper.url} alt="" />}
       <div className={`phone-stage${burst ? " is-burst" : ""}`}>
         {!transparent && <>
-        <img className="phone-wallpaper" src={wallpaper.url} alt="粉彩櫻花咖啡廳桌布" />
+        {!bg && <img className="phone-wallpaper" src={wallpaper.url} alt="粉彩櫻花咖啡廳桌布" />}
         <header className="phone-status" aria-label="iPhone 狀態列">
           <span className="status-time">10:41</span>
           <div className="dynamic-island"><span /></div>
