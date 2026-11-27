@@ -161,3 +161,10 @@ html,body{height:100%;overflow:hidden;overscroll-behavior:none;background:oklch(
 @keyframes quake{0%,100%{transform:translate(0,0)}20%{transform:translate(-12px,8px)}40%{transform:translate(10px,-10px)}60%{transform:translate(-8px,-6px)}80%{transform:translate(8px,10px)}}
 .onoma{font-family:"Dela Gothic One",sans-serif;color:oklch(0.9 0.18 95);-webkit-text-stroke:4px oklch(0.55 0.23 27);paint-order:stroke fill;text-shadow:5px 6px 0 oklch(0.25 0.1 27),0 0 24px var(--glow,oklch(0.9 0.18 95));animation:boing .8s infinite,jitter .12s infinite}
 .quake{animation:quake .5s}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes run{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes legs{0%,100%{transform:rotate(25deg)}50%{transform:rotate(-25deg)}}
+@keyframes zap{0%,100%{opacity:1}50%{opacity:.3}}
+.spin{animation:spin 3s linear infinite}.run{animation:run .35s ease-in-out infinite}
+.legA{transform-origin:top;animation:legs .35s infinite}.legB{transform-origin:top;animation:legs .35s infinite reverse}
+.zap{animation:zap .15s infinite}
