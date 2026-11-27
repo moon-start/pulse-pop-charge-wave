@@ -32,3 +32,5 @@ use the editor.
 - Keep the charging experience in a height-constrained portrait stage with CSS-driven effects and a separate character illustration; this preserves phone proportions without scrolling on wider screens.
 - Keep simulated battery progression in a browser-safe utility with numeric tests; this makes the reference starting value and charge limit explicit.
 - Drive charging presentation mode from validated router search state and use CSS :has() for document transparency; this keeps direct shortcut URLs and first-render backgrounds consistent without global style mutations.
+
+- Render the selected wallpaper once as a viewport-cover background beneath the portrait effects stage, without simulated home-screen UI; this keeps the supplied image unobscured and avoids duplicate wallpaper layers.
