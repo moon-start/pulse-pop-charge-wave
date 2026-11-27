@@ -181,6 +181,9 @@
   --tongue: oklch(.77 .15 10);
 }
 html,body { height:100%; overflow:hidden; overscroll-behavior:none; touch-action:manipulation; -webkit-user-select:none; user-select:none; }
+html:has(.charging-screen[data-mode="transparent"]),
+body:has(.charging-screen[data-mode="transparent"]),
+.charging-screen[data-mode="transparent"] { background:transparent; background-image:none; }
 .charging-screen { position:fixed; inset:0; overflow:hidden; background:var(--phone-ink); font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif; color:var(--phone-white); letter-spacing:0; }
 .desktop-wallpaper { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.6; }
 .phone-stage { position:relative; height:100dvh; width:min(100vw, 48dvh); margin:auto; isolation:isolate; overflow:hidden; container-type:size; }
@@ -220,6 +223,11 @@ html,body { height:100%; overflow:hidden; overscroll-behavior:none; touch-action
 .charging-plug { position:absolute; bottom:8%; left:43.5%; width:13%; height:8%; z-index:4; filter:drop-shadow(0 0 8px var(--phone-white)) drop-shadow(0 0 15px var(--energy-blue)); }.charging-plug svg { width:100%; height:100%; fill:var(--phone-white); stroke:var(--phone-white); stroke-width:6; stroke-linecap:round; stroke-linejoin:round; }
 .home-indicator { position:absolute; bottom:1.4%; left:33%; width:34%; height:4px; border-radius:5px; background:var(--phone-white); opacity:.85; }
 .sound-switch { position:absolute; bottom:1.2%; right:3%; z-index:6; width:32px; height:32px; border-radius:50%; color:var(--phone-white); background:var(--phone-glass); backdrop-filter:blur(8px); }.sound-switch:hover { background:var(--phone-glass); }.sound-switch svg { width:15px; height:15px; }
+.mode-switch { position:absolute; bottom:max(1.2%,env(safe-area-inset-bottom)); left:3%; z-index:6; height:32px; padding:0 12px; border-radius:16px; font-size:11px; color:var(--phone-ink); background:var(--phone-glass); backdrop-filter:blur(8px); }
+.mode-switch:hover { background:var(--phone-glass); }
+.charging-screen[data-mode="transparent"] .battery-readout { top:23%; text-shadow:0 1px 3px var(--phone-ink),0 0 12px var(--phone-shadow); }
+.charging-screen[data-mode="transparent"] .energy-core { top:36%; }
+.charging-screen[data-mode="transparent"] .charging-beam { top:53%; }
 .pulse-ring { position:absolute; inset:0; border:2px solid var(--energy-blue); border-radius:50%; opacity:0; pointer-events:none; }.is-burst .pulse-ring { animation:burst-wave .8s ease-out infinite; }.is-burst .pulse-ring.second { animation-delay:.4s; border-color:var(--energy-gold); }.is-burst .ring-arcs { animation-duration:.7s; }.is-burst .charging-beam { filter:brightness(1.6); }.is-burst .energy-core { animation:core-quake .25s linear 3; }
 @keyframes ring-spin { to { transform:rotate(360deg); } }
 @keyframes character-hop { 0%,100% { transform:translateY(2px) rotate(-4deg); } 50% { transform:translateY(-7px) rotate(3deg); } }

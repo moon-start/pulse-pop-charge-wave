@@ -3,10 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { Battery, Wifi, Signal, Volume2, VolumeX, CloudSun, StickyNote, Flower2, CreditCard, Camera, Mail, MessageCircle, Phone, Compass, Music2, Settings, CalendarDays, Heart, ShoppingBag, Play, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChargingCharacters } from "@/components/charging-characters";
-import { advanceCharge, INITIAL_CHARGE } from "@/lib/charging";
+import { advanceCharge, INITIAL_CHARGE, resolveChargingMode } from "@/lib/charging";
 import wallpaper from "@/assets/pink-cafe-wallpaper.png.asset.json";
 
 export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>) => ({ mode: resolveChargingMode(search["mode"]) }),
   head: () => ({ meta: [
     { title: "小新與小白・Turbo 充電桌布" },
     { name: "description", content: "粉彩櫻花咖啡廳 iPhone 全螢幕充電動畫：小新與小白、粉紅流光能量環與 Turbo 充電光束。" },
@@ -29,6 +30,9 @@ const apps = [
 ];
 
 function ChargingScreen() {
+  const { mode } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const transparent = mode === "transparent";
   const [percentage, setPercentage] = useState(INITIAL_CHARGE);
   const [sound, setSound] = useState(false);
   const [burst, setBurst] = useState(false);
@@ -68,9 +72,10 @@ function ChargingScreen() {
   };
 
   return (
-    <main className="charging-screen" onPointerDown={pulse} aria-label="小新 Turbo 充電動畫">
-      <img className="desktop-wallpaper" src={wallpaper.url} alt="" />
+    <main className="charging-screen" data-mode={mode} onPointerDown={pulse} aria-label="小新 Turbo 充電動畫">
+      {!transparent && <img className="desktop-wallpaper" src={wallpaper.url} alt="" />}
       <div className={`phone-stage${burst ? " is-burst" : ""}`}>
+        {!transparent && <>
         <img className="phone-wallpaper" src={wallpaper.url} alt="粉彩櫻花咖啡廳桌布" />
         <header className="phone-status" aria-label="iPhone 狀態列">
           <span className="status-time">10:41</span>
@@ -88,6 +93,7 @@ function ChargingScreen() {
         </div>
         <div className="home-dock" aria-hidden="true">{[Phone, Compass, MessageCircle, Music2].map((Icon, index) => <span className={`app-icon pastel-${index % 4}`} key={index}><Icon strokeWidth={1.5} /></span>)}</div>
         <div className="charging-shade" />
+        </>}
 
         <section className="battery-readout" aria-label="充電電量">
           <div className="battery-percentage"><Zap fill="currentColor" strokeWidth={0} /><span>{percentage.toFixed(2)}<small>%</small></span></div>
@@ -107,7 +113,9 @@ function ChargingScreen() {
           <span className="core-spark spark-one">✧</span><span className="core-spark spark-two">✦</span>
         </div>
         <div className="charging-plug" aria-label="發光充電插頭"><svg viewBox="0 0 64 70"><path d="M22 7v16m20-16v16M16 23h32v17q0 13-16 13T16 40zM32 53v17" /></svg></div>
-        <div className="home-indicator" />
+        {!transparent && <div className="home-indicator" />}
+
+        <Button variant="ghost" className="mode-switch" onPointerDown={event => event.stopPropagation()} onClick={() => void navigate({ search: previous => ({ ...previous, mode: transparent ? "desktop" : "transparent" }), replace: true })}>{transparent ? "完整桌面" : "純透明特效"}</Button>
 
         <Button variant="ghost" size="icon" className="sound-switch" aria-label={sound ? "靜音" : "開啟音效"} aria-pressed={sound} title={sound ? "靜音" : "開啟音效"} onPointerDown={event => event.stopPropagation()} onClick={() => { if (!sound) playCharge(); setSound(value => !value); }}>{sound ? <Volume2 /> : <VolumeX />}</Button>
       </div>
