@@ -28,3 +28,6 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+- Keep the charging experience in a height-constrained portrait stage with CSS-driven effects and a separate character illustration; this preserves phone proportions without scrolling on wider screens.
+- Keep simulated battery progression in a browser-safe utility with numeric tests; this makes the reference starting value and charge limit explicit.
