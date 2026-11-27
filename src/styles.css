@@ -154,3 +154,10 @@
     color: var(--color-foreground);
   }
 }
+
+html,body{height:100%;overflow:hidden;overscroll-behavior:none;background:oklch(0.12 0.03 280);touch-action:manipulation;-webkit-user-select:none;user-select:none}
+@keyframes boing{0%,100%{transform:scale(1) rotate(-6deg)}20%{transform:scale(1.25) rotate(-3deg)}35%{transform:scale(.92) rotate(-8deg)}50%{transform:scale(1.1) rotate(-5deg)}}
+@keyframes jitter{0%,100%{translate:0 0}25%{translate:2px -2px}50%{translate:-2px 1px}75%{translate:1px 2px}}
+@keyframes quake{0%,100%{transform:translate(0,0)}20%{transform:translate(-12px,8px)}40%{transform:translate(10px,-10px)}60%{transform:translate(-8px,-6px)}80%{transform:translate(8px,10px)}}
+.onoma{font-family:"Dela Gothic One",sans-serif;color:oklch(0.9 0.18 95);-webkit-text-stroke:4px oklch(0.55 0.23 27);paint-order:stroke fill;text-shadow:5px 6px 0 oklch(0.25 0.1 27),0 0 24px var(--glow,oklch(0.9 0.18 95));animation:boing .8s infinite,jitter .12s infinite}
+.quake{animation:quake .5s}
