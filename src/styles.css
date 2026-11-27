@@ -157,20 +157,21 @@
 
 
 :root {
-  --phone-ink: oklch(.27 .025 290);
+  --phone-ink: oklch(.3 .045 350);
   --phone-white: oklch(1 0 0);
   --phone-black: oklch(.08 0 0);
-  --phone-glass: oklch(.98 .015 285 / .47);
-  --phone-shade: oklch(.32 .025 290 / .3);
-  --phone-shadow: oklch(.25 .04 280 / .2);
-  --pastel-blue: oklch(.82 .07 250);
-  --pastel-pink: oklch(.85 .065 355);
-  --pastel-gold: oklch(.88 .09 85);
-  --pastel-mint: oklch(.85 .07 160);
+  --phone-glass: oklch(.95 .035 355 / .58);
+  --phone-shade: oklch(.42 .06 350 / .18);
+  --phone-shadow: oklch(.34 .065 350 / .26);
+  --phone-label-glass: oklch(.42 .065 350 / .42);
+  --pastel-blue: oklch(.84 .055 320);
+  --pastel-pink: oklch(.82 .095 355);
+  --pastel-gold: oklch(.9 .075 75);
+  --pastel-mint: oklch(.88 .055 15);
   --notification-red: oklch(.64 .21 25);
-  --energy-blue: oklch(.84 .12 230);
-  --energy-gold: oklch(.91 .14 85);
-  --energy-green: oklch(.92 .12 135);
+  --energy-blue: oklch(.83 .15 350);
+  --energy-gold: oklch(.93 .1 75);
+  --energy-green: oklch(.86 .1 310);
   --skin: oklch(.88 .08 60);
   --shirt: oklch(.6 .23 25);
   --shorts: oklch(.9 .17 95);
@@ -203,7 +204,7 @@ html,body { height:100%; overflow:hidden; overscroll-behavior:none; touch-action
 .charging-shade { position:absolute; inset:0; background:var(--phone-shade); z-index:-1; }
 .battery-readout { position:absolute; top:32%; left:0; width:100%; text-align:center; z-index:2; text-shadow:0 1px 10px var(--phone-shadow); }
 .battery-percentage { display:flex; justify-content:center; align-items:center; gap:7px; font-size:32px; font-weight:600; font-variant-numeric:tabular-nums; line-height:1.25; }.battery-percentage>svg { width:24px; height:28px; }.battery-percentage small { font-size:23px; margin-left:2px; font-weight:500; }
-.charging-labels { display:flex; justify-content:center; gap:6px; margin-top:7px; font-size:10px; }.charging-labels>span { border:1px solid var(--phone-glass); border-radius:20px; padding:3px 8px; background:var(--phone-glass); }.charging-labels b { font-size:11px; font-style:italic; font-weight:700; }
+.charging-labels { display:flex; justify-content:center; gap:6px; margin-top:7px; font-size:10px; }.charging-labels>span { border:1px solid var(--phone-glass); border-radius:20px; padding:3px 8px; background:var(--phone-label-glass); }.charging-labels b { font-size:11px; font-style:italic; font-weight:700; }
 .energy-core { position:absolute; width:73%; aspect-ratio:1; left:13.5%; top:48%; z-index:3; }
 .energy-ring { position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
 .ring-arcs { transform-origin:150px 150px; animation:ring-spin 4s linear infinite; }.ring-arcs circle { fill:none; stroke-width:6; stroke-linecap:round; stroke-dasharray:245 610; }.arc-blue { stroke:var(--energy-blue); stroke-dashoffset:0; }.arc-gold { stroke:var(--energy-gold); stroke-dashoffset:-285; }.arc-green { stroke:var(--energy-green); stroke-dashoffset:-570; }.ring-blur circle { stroke-width:13; }

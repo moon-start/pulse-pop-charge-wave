@@ -4,14 +4,14 @@ import { Battery, Wifi, Signal, Volume2, VolumeX, CloudSun, StickyNote, Flower2,
 import { Button } from "@/components/ui/button";
 import { ChargingCharacters } from "@/components/charging-characters";
 import { advanceCharge, INITIAL_CHARGE } from "@/lib/charging";
-import wallpaper from "@/assets/cafe-wallpaper.png.asset.json";
+import wallpaper from "@/assets/pink-cafe-wallpaper.png.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({ meta: [
     { title: "小新與小白・Turbo 充電桌布" },
-    { name: "description", content: "粉彩咖啡廳 iPhone 全螢幕充電動畫：小新與小白、多色流光能量環與 Turbo 充電光束。" },
+    { name: "description", content: "粉彩櫻花咖啡廳 iPhone 全螢幕充電動畫：小新與小白、粉紅流光能量環與 Turbo 充電光束。" },
     { property: "og:title", content: "小新與小白・Turbo 充電桌布" },
-    { property: "og:description", content: "溫馨粉彩街景、旋轉能量環與小新小白奔跑充電動畫。" },
+    { property: "og:description", content: "粉紅櫻花咖啡廳、柔和旋轉能量環與小新小白奔跑充電動畫。" },
     { property: "og:type", content: "website" },
     { name: "twitter:card", content: "summary_large_image" },
   ] }),
@@ -71,7 +71,7 @@ function ChargingScreen() {
     <main className="charging-screen" onPointerDown={pulse} aria-label="小新 Turbo 充電動畫">
       <img className="desktop-wallpaper" src={wallpaper.url} alt="" />
       <div className={`phone-stage${burst ? " is-burst" : ""}`}>
-        <img className="phone-wallpaper" src={wallpaper.url} alt="粉彩日系咖啡廳街道桌布" />
+        <img className="phone-wallpaper" src={wallpaper.url} alt="粉彩櫻花咖啡廳桌布" />
         <header className="phone-status" aria-label="iPhone 狀態列">
           <span className="status-time">10:41</span>
           <div className="dynamic-island"><span /></div>
