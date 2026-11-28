@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChargingCharacters } from "@/components/charging-characters";
-import { advanceCharge, resolveChargingMode, resolveStartCharge, resolveTestBackground } from "@/lib/charging";
+import { advanceCharge, parseBatteryMessage, resolveChargingMode, resolveStartCharge, resolveTestBackground } from "@/lib/charging";
 import wallpaper from "@/assets/pink-phone-background.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -28,7 +28,23 @@ function ChargingScreen() {
   const audio = useRef<AudioContext | null>(null);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useEffect(() => { setPercentage(battery); }, [battery]);
+  const fromExpo = useRef(false);
+  useEffect(() => { if (!fromExpo.current) setPercentage(battery); }, [battery]);
+
+  useEffect(() => {
+    const onMessage = (event: Event) => {
+      const level = parseBatteryMessage((event as MessageEvent).data);
+      if (level === undefined) return;
+      fromExpo.current = true;
+      setPercentage(level);
+    };
+    window.addEventListener("message", onMessage);
+    document.addEventListener("message", onMessage);
+    const bridge = (window as unknown as { ReactNativeWebView?: { postMessage: (m: string) => void } }).ReactNativeWebView;
+    bridge?.postMessage(JSON.stringify({ type: "PAGE_LOADED" }));
+    if (window.parent !== window) window.parent.postMessage({ type: "PAGE_LOADED" }, "*");
+    return () => { window.removeEventListener("message", onMessage); document.removeEventListener("message", onMessage); };
+  }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setPercentage(p => advanceCharge(p, 0.01 + Math.random() * 0.008)), 1600);

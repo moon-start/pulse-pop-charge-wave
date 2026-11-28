@@ -32,3 +32,16 @@ describe("shortcut parameters", () => {
     expect(resolveTestBackground("url(x)")).toBeUndefined();
   });
 });
+import { parseBatteryMessage } from "@/lib/charging";
+describe("Expo battery bridge", () => {
+  it("reads 0-1 fractions and 0-100 percentages", () => {
+    expect(parseBatteryMessage({ type: "BATTERY_LEVEL", level: 0.45 })).toBeCloseTo(45);
+    expect(parseBatteryMessage('{"type":"BATTERY_LEVEL","level":62.5}')).toBe(62.5);
+    expect(parseBatteryMessage({ type: "BATTERY_LEVEL", level: 1 })).toBe(100);
+  });
+  it("ignores other or invalid messages", () => {
+    expect(parseBatteryMessage({ type: "OTHER", level: 0.5 })).toBeUndefined();
+    expect(parseBatteryMessage({ type: "BATTERY_LEVEL", level: -1 })).toBeUndefined();
+    expect(parseBatteryMessage("not json")).toBeUndefined();
+  });
+});
