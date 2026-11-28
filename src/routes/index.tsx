@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChargingCharacters } from "@/components/charging-characters";
-import { advanceCharge, parseBatteryMessage, resolveChargingMode, resolveStartCharge, resolveTestBackground } from "@/lib/charging";
+import { advanceCharge, parseBatteryUpdate, resolveChargingMode, resolveStartCharge, resolveTestBackground } from "@/lib/charging";
 import chargeSound from "@/assets/charge-sound.mp3.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -19,9 +19,10 @@ export const Route = createFileRoute("/")({
   component: ChargingScreen,
 });
 
-function ChargingScreen() {
+export function ChargingScreen() {
   const { mode, battery, bg } = Route.useSearch();
   const [percentage, setPercentage] = useState(battery);
+  const [charging, setCharging] = useState(true);
   const [sound, setSound] = useState(true);
   const [burst, setBurst] = useState(false);
   const audio = useRef<HTMLAudioElement | null>(null);
@@ -29,14 +30,22 @@ function ChargingScreen() {
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fromExpo = useRef(false);
+  const simulationTimer = useRef<ReturnType<typeof setInterval> | null>(null);
   useEffect(() => { if (!fromExpo.current) setPercentage(battery); }, [battery]);
 
   useEffect(() => {
     const onMessage = (event: Event) => {
-      const level = parseBatteryMessage((event as MessageEvent).data);
-      if (level === undefined) return;
+      const update = parseBatteryUpdate((event as MessageEvent).data);
+      if (update === undefined) return;
+      const { batteryLevel, charging: externalCharging } = update;
       fromExpo.current = true;
-      setPercentage(level);
+      if (simulationTimer.current !== null) {
+        clearInterval(simulationTimer.current);
+        simulationTimer.current = null;
+      }
+      setPercentage(batteryLevel);
+      if (externalCharging !== undefined) setCharging(externalCharging);
+      console.log('外部電量已更新 React state：', batteryLevel);
       if (soundOn.current) playCharge();
     };
     window.addEventListener("message", onMessage);
@@ -49,8 +58,17 @@ function ChargingScreen() {
   }, []);
 
   useEffect(() => {
-    const timer = setInterval(() => setPercentage(p => advanceCharge(p, 0.01 + Math.random() * 0.008)), 1600);
-    return () => { clearInterval(timer); if (timeout.current) clearTimeout(timeout.current); audio.current?.pause(); };
+    if (!fromExpo.current) {
+      simulationTimer.current = setInterval(() => {
+        if (!fromExpo.current) setPercentage(p => fromExpo.current ? p : advanceCharge(p, 0.01 + Math.random() * 0.008));
+      }, 1600);
+    }
+    return () => {
+      if (simulationTimer.current !== null) clearInterval(simulationTimer.current);
+      simulationTimer.current = null;
+      if (timeout.current) clearTimeout(timeout.current);
+      audio.current?.pause();
+    };
   }, []);
 
   const playCharge = () => {
@@ -69,7 +87,7 @@ function ChargingScreen() {
   };
 
   return (
-    <main className="charging-screen" data-mode={mode} style={bg ? { background: bg } : undefined} onPointerDown={pulse} aria-label="小新 Turbo 充電動畫">
+    <main className="charging-screen" data-mode={mode} data-charging={charging} style={bg ? { background: bg } : undefined} onPointerDown={pulse} aria-label="小新 Turbo 充電動畫">
       <div className={`phone-stage${burst ? " is-burst" : ""}`}>
         <section className="battery-readout" aria-label="充電電量">
           <div className="battery-percentage"><Zap fill="currentColor" strokeWidth={0} /><span>{percentage.toFixed(2)}<small>%</small></span></div>

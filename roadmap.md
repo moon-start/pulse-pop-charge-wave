@@ -1,4 +1,6 @@
 # Charging screen recreation
+- [x] Integrate validated external battery and charging state with percentage, stopping simulation immediately on real readings.
+- [x] Test message formats, source priority, timer shutdown and preserved charging interactions.
 - [x] Add URL-driven transparent effects mode and desktop switch, preserving core effects and sound.
 - [x] Verify transparent document backgrounds, direct shortcut entry and mode switching on phone and desktop.
 - [x] Recreate the reference phone desktop, widget, battery labels and pastel app icons.

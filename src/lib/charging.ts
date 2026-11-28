@@ -20,11 +20,16 @@ export function normalizeBatteryLevel(level: unknown) {
   if (!Number.isFinite(value) || value < 0) return undefined;
   return Math.min(100, value <= 1 ? value * 100 : value);
 }
-export function parseBatteryMessage(data: unknown): number | undefined {
+export function parseBatteryUpdate(data: unknown): { batteryLevel: number; charging?: boolean } | undefined {
   let payload = data;
   if (typeof payload === "string") { try { payload = JSON.parse(payload); } catch { return undefined; } }
   if (!payload || typeof payload !== "object") return undefined;
   const msg = payload as Record<string, unknown>;
   if (msg["type"] !== "BATTERY_LEVEL") return undefined;
-  return normalizeBatteryLevel(msg["level"] ?? msg["batteryLevel"] ?? msg["battery"] ?? msg["value"]);
+  const batteryLevel = normalizeBatteryLevel(msg["batteryLevel"] ?? msg["level"] ?? msg["battery"] ?? msg["value"]);
+  if (batteryLevel === undefined) return undefined;
+  return typeof msg["charging"] === "boolean" ? { batteryLevel, charging: msg["charging"] } : { batteryLevel };
+}
+export function parseBatteryMessage(data: unknown): number | undefined {
+  return parseBatteryUpdate(data)?.batteryLevel;
 }
