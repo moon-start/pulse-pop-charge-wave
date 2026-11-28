@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import { advanceCharge, INITIAL_CHARGE, resolveChargingMode } from "@/lib/charging";
 
 describe("charging percentage", () => {
-  it("opens pure effects for mode=transparent and otherwise keeps the full desktop", () => {
+  it("defaults to transparent and opens desktop only for mode=desktop", () => {
     expect(resolveChargingMode("transparent")).toBe("transparent");
-    expect(resolveChargingMode(undefined)).toBe("desktop");
+    expect(resolveChargingMode(undefined)).toBe("transparent");
     expect(resolveChargingMode("desktop")).toBe("desktop");
-    expect(resolveChargingMode("invalid")).toBe("desktop");
+    expect(resolveChargingMode("invalid")).toBe("transparent");
   });
   it("starts at the reference percentage", () => {
     expect(INITIAL_CHARGE).toBe(79.98);

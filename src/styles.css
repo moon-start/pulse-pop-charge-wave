@@ -184,7 +184,7 @@ html,body { height:100%; overflow:hidden; overscroll-behavior:none; touch-action
 html:has(.charging-screen[data-mode="transparent"]),
 body:has(.charging-screen[data-mode="transparent"]),
 .charging-screen[data-mode="transparent"] { background:transparent; background-image:none; }
-.charging-screen { position:fixed; inset:0; overflow:hidden; background:var(--phone-ink); background-size:cover; background-position:center; background-repeat:no-repeat; font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif; color:var(--phone-white); letter-spacing:0; }
+.charging-screen { position:fixed; inset:0; overflow:hidden; background:transparent; background-size:cover; background-position:center; background-repeat:no-repeat; font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif; color:var(--phone-white); letter-spacing:0; }
 .phone-stage { position:relative; height:100dvh; width:min(100vw, 48dvh); margin:auto; isolation:isolate; overflow:hidden; container-type:size; }
 .battery-readout { position:absolute; top:23%; left:0; width:100%; text-align:center; z-index:2; text-shadow:0 1px 3px var(--phone-ink),0 0 12px var(--phone-shadow); }
 .battery-percentage { display:flex; justify-content:center; align-items:center; gap:7px; font-size:32px; font-weight:600; font-variant-numeric:tabular-nums; line-height:1.25; }.battery-percentage>svg { width:24px; height:28px; }.battery-percentage small { font-size:23px; margin-left:2px; font-weight:500; }

@@ -4,7 +4,7 @@ import { Volume2, VolumeX, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChargingCharacters } from "@/components/charging-characters";
 import { advanceCharge, parseBatteryMessage, resolveChargingMode, resolveStartCharge, resolveTestBackground } from "@/lib/charging";
-import wallpaper from "@/assets/pink-phone-background.jpeg.asset.json";
+import chargeSound from "@/assets/charge-sound.mp3.asset.json";
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>) => ({ mode: resolveChargingMode(search["mode"]), battery: resolveStartCharge(search["battery"]), bg: resolveTestBackground(search["bg"]) }),
@@ -21,11 +21,11 @@ export const Route = createFileRoute("/")({
 
 function ChargingScreen() {
   const { mode, battery, bg } = Route.useSearch();
-  const transparent = mode === "transparent";
   const [percentage, setPercentage] = useState(battery);
-  const [sound, setSound] = useState(false);
+  const [sound, setSound] = useState(true);
   const [burst, setBurst] = useState(false);
-  const audio = useRef<AudioContext | null>(null);
+  const audio = useRef<HTMLAudioElement | null>(null);
+  const soundOn = useRef(true);
   const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fromExpo = useRef(false);
@@ -37,37 +37,27 @@ function ChargingScreen() {
       if (level === undefined) return;
       fromExpo.current = true;
       setPercentage(level);
+      if (soundOn.current) playCharge();
     };
     window.addEventListener("message", onMessage);
     document.addEventListener("message", onMessage);
     const bridge = (window as unknown as { ReactNativeWebView?: { postMessage: (m: string) => void } }).ReactNativeWebView;
     bridge?.postMessage(JSON.stringify({ type: "PAGE_LOADED" }));
+    if (soundOn.current) playCharge();
     if (window.parent !== window) window.parent.postMessage({ type: "PAGE_LOADED" }, "*");
     return () => { window.removeEventListener("message", onMessage); document.removeEventListener("message", onMessage); };
   }, []);
 
   useEffect(() => {
     const timer = setInterval(() => setPercentage(p => advanceCharge(p, 0.01 + Math.random() * 0.008)), 1600);
-    return () => { clearInterval(timer); if (timeout.current) clearTimeout(timeout.current); void audio.current?.close(); };
+    return () => { clearInterval(timer); if (timeout.current) clearTimeout(timeout.current); audio.current?.pause(); };
   }, []);
 
   const playCharge = () => {
-    const context = audio.current ?? new AudioContext();
-    audio.current = context;
-    void context.resume();
-    const now = context.currentTime;
-    [0, 0.14, 0.28, 0.48].forEach((delay, index) => {
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      const duration = index === 3 ? 0.65 : 0.09;
-      oscillator.type = index === 3 ? "sawtooth" : "square";
-      oscillator.frequency.setValueAtTime(index === 3 ? 220 : 880 + index * 220, now + delay);
-      if (index === 3) oscillator.frequency.exponentialRampToValueAtTime(2400, now + delay + duration);
-      gain.gain.setValueAtTime(0.055, now + delay);
-      gain.gain.exponentialRampToValueAtTime(0.001, now + delay + duration);
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(now + delay); oscillator.stop(now + delay + duration);
-    });
+    const clip = audio.current ?? new Audio(chargeSound.url);
+    audio.current = clip;
+    clip.currentTime = 0;
+    void clip.play().catch(() => undefined);
   };
 
   const pulse = () => {
@@ -79,7 +69,7 @@ function ChargingScreen() {
   };
 
   return (
-    <main className="charging-screen" data-mode={mode} style={bg ? { background: bg } : !transparent ? { backgroundImage: `url("${wallpaper.url}")` } : undefined} onPointerDown={pulse} aria-label="小新 Turbo 充電動畫">
+    <main className="charging-screen" data-mode={mode} style={bg ? { background: bg } : undefined} onPointerDown={pulse} aria-label="小新 Turbo 充電動畫">
       <div className={`phone-stage${burst ? " is-burst" : ""}`}>
         <section className="battery-readout" aria-label="充電電量">
           <div className="battery-percentage"><Zap fill="currentColor" strokeWidth={0} /><span>{percentage.toFixed(2)}<small>%</small></span></div>
@@ -100,7 +90,7 @@ function ChargingScreen() {
         </div>
         <div className="charging-plug" aria-label="發光充電插頭"><svg viewBox="0 0 64 70"><path d="M22 7v16m20-16v16M16 23h32v17q0 13-16 13T16 40zM32 53v17" /></svg></div>
 
-        <Button variant="ghost" size="icon" className="sound-switch" aria-label={sound ? "靜音" : "開啟音效"} aria-pressed={sound} title={sound ? "靜音" : "開啟音效"} onPointerDown={event => event.stopPropagation()} onClick={() => { if (!sound) playCharge(); setSound(value => !value); }}>{sound ? <Volume2 /> : <VolumeX />}</Button>
+        <Button variant="ghost" size="icon" className="sound-switch" aria-label={sound ? "靜音" : "開啟音效"} aria-pressed={sound} title={sound ? "靜音" : "開啟音效"} onPointerDown={event => event.stopPropagation()} onClick={() => { if (!sound) playCharge(); setSound(value => { soundOn.current = !value; if (value) audio.current?.pause(); return !value; }); }}>{sound ? <Volume2 /> : <VolumeX />}</Button>
       </div>
     </main>
   );

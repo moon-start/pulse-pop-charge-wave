@@ -1,6 +1,6 @@
 export const INITIAL_CHARGE = 79.98;
 export function resolveChargingMode(mode: unknown) {
-  return mode === "transparent" ? "transparent" : "desktop";
+  return mode === "desktop" ? "desktop" : "transparent";
 }
 export function resolveStartCharge(battery: unknown) {
   const value = typeof battery === "number" ? battery : typeof battery === "string" && battery.trim() !== "" ? Number(battery.replace("%", "")) : NaN;
