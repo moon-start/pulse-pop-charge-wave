@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { advanceCharge, INITIAL_CHARGE, resolveChargingMode } from "@/lib/charging";
+import { advanceCharge, INITIAL_CHARGE, resolveChargingMode, resolveChargingSearch } from "@/lib/charging";
 
 describe("charging percentage", () => {
   it("defaults to transparent and opens desktop only for mode=desktop", () => {
@@ -18,6 +18,14 @@ describe("charging percentage", () => {
 });
 import { resolveStartCharge, resolveTestBackground } from "@/lib/charging";
 describe("shortcut parameters", () => {
+  it("keeps the bare Expo URL free of injected mode and battery parameters", () => {
+    expect(resolveChargingSearch({})).toEqual({});
+    expect(resolveChargingMode(resolveChargingSearch({}).mode)).toBe("transparent");
+    expect(resolveStartCharge(resolveChargingSearch({}).battery)).toBe(79.98);
+  });
+  it("retains explicitly supplied desktop preview parameters", () => {
+    expect(resolveChargingSearch({ mode: "desktop", battery: "79.98" })).toEqual({ mode: "desktop", battery: 79.98 });
+  });
   it("starts from the battery value passed by the shortcut", () => {
     expect(resolveStartCharge("45")).toBe(45);
     expect(resolveStartCharge(62.5)).toBe(62.5);

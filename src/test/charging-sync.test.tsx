@@ -8,7 +8,7 @@ describe("external battery synchronization", () => {
   beforeEach(() => {
     vi.useFakeTimers();
     startBattery = 79.98;
-    vi.spyOn(Route, "useSearch").mockImplementation(() => ({ mode: "transparent", battery: startBattery, bg: undefined }));
+    vi.spyOn(Route, "useSearch").mockImplementation(() => ({ mode: "transparent", battery: startBattery }));
     vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
     vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
     vi.spyOn(console, "log").mockImplementation(() => {});
@@ -22,6 +22,17 @@ describe("external battery synchronization", () => {
     act(() => { target.dispatchEvent(new MessageEvent("message", { data })); });
   };
   const displayedBattery = (container: HTMLElement) => Number(container.querySelector(".battery-percentage span")?.textContent?.replace("%", ""));
+
+  it("receives real battery at the bare URL without any search parameters", () => {
+    vi.mocked(Route.useSearch).mockReturnValue({});
+    const { container } = render(<ChargingScreen />);
+    expect(displayedBattery(container)).toBe(79.98);
+    expect(container.querySelector("main")?.dataset["mode"]).toBe("transparent");
+    receive(window, { type: "BATTERY_LEVEL", level: 0.45 });
+    act(() => { vi.advanceTimersByTime(16000); });
+    expect(displayedBattery(container)).toBe(45);
+    expect(vi.getTimerCount()).toBe(0);
+  });
 
   it("keeps the URL starting battery and simulation until a valid reading arrives", () => {
     const { container } = render(<ChargingScreen />);

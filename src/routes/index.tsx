@@ -3,11 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { Volume2, VolumeX, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ChargingCharacters } from "@/components/charging-characters";
-import { advanceCharge, parseBatteryUpdate, resolveChargingMode, resolveStartCharge, resolveTestBackground } from "@/lib/charging";
+import { advanceCharge, parseBatteryUpdate, resolveChargingMode, resolveStartCharge, resolveChargingSearch } from "@/lib/charging";
 import chargeSound from "@/assets/charge-sound.mp3.asset.json";
 
 export const Route = createFileRoute("/")({
-  validateSearch: (search: Record<string, unknown>) => ({ mode: resolveChargingMode(search["mode"]), battery: resolveStartCharge(search["battery"]), bg: resolveTestBackground(search["bg"]) }),
+  validateSearch: resolveChargingSearch,
   head: () => ({ meta: [
     { title: "小新與小白・Turbo 充電桌布" },
     { name: "description", content: "自訂粉紅背景上的 iPhone 全螢幕充電動畫：小新與小白、流光能量環與 Turbo 動態電量。" },
@@ -20,7 +20,10 @@ export const Route = createFileRoute("/")({
 });
 
 export function ChargingScreen() {
-  const { mode, battery, bg } = Route.useSearch();
+  const search = Route.useSearch();
+  const mode = resolveChargingMode(search.mode);
+  const battery = resolveStartCharge(search.battery);
+  const bg = search.bg;
   const [percentage, setPercentage] = useState(battery);
   const [charging, setCharging] = useState(true);
   const [sound, setSound] = useState(true);

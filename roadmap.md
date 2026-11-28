@@ -1,4 +1,6 @@
 # Charging screen recreation
+- [x] Keep the bare WebView URL free of automatic mode/battery parameters, preserving optional desktop preview inputs.
+- [ ] Verify battery messages and a stable bare URL on the published site after publishing.
 - [x] Integrate validated external battery and charging state with percentage, stopping simulation immediately on real readings.
 - [x] Test message formats, source priority, timer shutdown and preserved charging interactions.
 - [x] Add URL-driven transparent effects mode and desktop switch, preserving core effects and sound.

@@ -1,4 +1,12 @@
 export const INITIAL_CHARGE = 79.98;
+export function resolveChargingSearch(search: Record<string, unknown>): { mode?: "desktop" | "transparent"; battery?: number; bg?: string } {
+  const bg = resolveTestBackground(search["bg"]);
+  return {
+    ...(search["mode"] === undefined ? {} : { mode: resolveChargingMode(search["mode"]) }),
+    ...(search["battery"] === undefined ? {} : { battery: resolveStartCharge(search["battery"]) }),
+    ...(bg === undefined ? {} : { bg }),
+  };
+}
 export function resolveChargingMode(mode: unknown) {
   return mode === "desktop" ? "desktop" : "transparent";
 }
